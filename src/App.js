@@ -1,26 +1,60 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useFormik } from 'formik';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+
+    /**
+     * Handle formik form submission
+     * 
+     * @param {any} values The formik values
+     */
+    const handleSubmit = (values) => {
+        alert(JSON.stringify(values, null, 2));
+    };
+
+    const config = {
+        initialValues: {
+            items: [
+                { title: 'Foo', selected: false },
+                { title: 'Bar', selected: false },
+                { title: 'Bazz', selected: false }
+            ]
+        },
+        onSubmit: handleSubmit
+    };
+
+    const formik = useFormik(config);
+
+    /**
+     * Render a checkbox
+     * 
+     * @param {object} item The provided item of formik values array
+     * @param {number} index The index of the provided item in formik values array
+     */
+    const renderCheckbox = (item, index) => {
+        const field = 'items.' + index + '.selected';
+
+        return (
+            <div key={index}>
+                <input type="checkbox"
+                    id={field}
+                    name={field}
+                    value={formik.values.items[index].selected}
+                    onChange={formik.handleChange} />
+                <label htmlFor={field}> {item.title}</label>
+            </div>
+        );
+    };
+
+    /**
+     * Render the component
+     */
+    return (
+        <form onSubmit={formik.handleSubmit}>
+            {formik.values.items.map((item, index) => renderCheckbox(item, index))}
+            <button type="submit">Submit</button>
+        </form>
+    );
+};
 
 export default App;
